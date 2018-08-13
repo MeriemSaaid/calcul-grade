@@ -1,0 +1,121 @@
+<?php
+/**
+ * Function that takes list of scores and print a grade for each score
+ *
+ * @param scores $scoreLis
+**/
+function getGrades($scoreList)
+{
+	
+	//Sort the given array
+	rsort($scoreList);
+	
+	//Declare the group of grades
+	$group 		= array("A"=>[],"B"=>[],"C"=>[],"D"=>[],"F"=>[]);
+	
+	//Declare the variables containing the last value of each grade
+	$last_val_a= $last_val_b =$last_val_c = $last_val_d = 0;
+	
+	// Calculate at which points the score list will be broken
+	$percentile = count($scoreList)*(20/100);
+	
+	
+	for($i=0;$i<count($scoreList);$i++)
+	{
+		//Creating the list of A grade
+		if(count($group["A"])< $percentile ) 
+		{
+			array_push($group["A"],$scoreList[$i]);		//Create the list of A grade
+			$last_val_a = $scoreList[$i];        		//Store the last value of A list
+			continue;
+		}
+	
+		if(count($group["B"])< $percentile ) 
+		{
+			if($last_val_a==$scoreList[$i])				//Compare the last value of the previous group to the first value of the next group of score and check if there are 2 identical scores
+			{
+				array_push($group["A"],$scoreList[$i]); //Add the duplicate score to A group
+				array_push($group["B"],"");				//Create an empty line for the duplicate score in B group
+				
+				
+			}
+			else{
+				array_push($group["B"],$scoreList[$i]); //Create the list of B grade
+				$last_val_b = $scoreList[$i];			//Store the last value of B list
+				
+				
+			}
+			continue;
+			
+		}
+		if(count($group["C"])< $percentile) 		
+		{
+			if($last_val_b==$scoreList[$i])			 
+			{
+				array_push($group["B"],$scoreList[$i]);	//Add the duplicate score to the B group
+				array_push($group["C"],"");				//Create an empty line for the duplicate score in the C group
+
+			}
+			else
+			{
+				array_push($group["C"],$scoreList[$i]); //Create the list of C grade
+				$last_val_c = $scoreList[$i];			//Store the last value of C list
+				
+			}
+			continue;
+		}
+		if(count($group["D"])< $percentile) 
+		{
+			if($last_val_c==$scoreList[$i])
+			{
+				array_push($group["C"],$scoreList[$i]);  //Add the duplicate score to the C group
+				array_push($group["D"],"");				 //Create an empty line for the duplicate score in the D group
+
+			}
+			else
+			{
+				array_push($group["D"],$scoreList[$i]);  //Create the list of D grade
+				$last_val_d = $scoreList[$i];			 //Store the last value of D list
+			}
+			continue;
+		}
+	
+		if(count($group["F"])< $percentile) 
+		{
+			if($last_val_d==$scoreList[$i])
+			{
+				array_push($group["D"],$scoreList[$i]); //Add the duplicate score to the D group
+				array_push($group["F"],"");				 //Store the last value of F group
+				
+			}
+			else
+			{
+			  array_push($group["F"],$scoreList[$i]);	//Create the list of F grade
+			}
+			
+			continue;
+		}
+	}
+	/*Looping the grade array to print scores with there grades*/
+	foreach($group as $key => $content)
+	{
+	
+		for($i =0;$i<count($content);$i++)
+		{
+			if(isset($content[$i]) &&  !empty($content[$i])) //Eliminate the empty line created for the duplicate scores
+			{
+				echo $content[$i]." => ".$key."<br>";        //Print the Score with it associated grade
+			}
+		}
+	
+	
+	}
+	
+}
+//Call the function getGrades 
+$studentScores 		= array(99, 92, 91, 91, 89, 85, 83, 82, 80, 79, 78, 78, 77, 76, 75, 74, 62, 55, 43, 20);
+$studentsGrades 	= getGrades($studentScores);
+
+
+
+?>
